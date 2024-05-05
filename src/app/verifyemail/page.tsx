@@ -33,6 +33,33 @@ export default function VerifyEmailPage(){
         }
     }
 
+    // const isVerified = async () => {
+    //     try{
+    //         const response = await fetch(`http://localhost:4000/api/user/isverified/?token=${token}`, {
+    //             method: "GET",
+    //             headers: {
+    //                 'Content-Type' : 'application/json'
+    //             }
+    //         })
+
+    //         const res = await response.json();
+
+    //         console.log("response on verify email "+res );
+
+    //         if(response.ok){
+    //             alert(res.message);
+    //             // setVerified(res.data.isverified);
+    //         }
+    //         else{
+    //             console.log(response.status);
+    //         }
+    //     }
+    //     catch(error){
+    //         setError(true);
+    //         console.log(error);
+    //     }
+    // }
+
     useEffect(() => {
         const urlToken = window.location.search.split("=")[1];
         setToken(urlToken || "");

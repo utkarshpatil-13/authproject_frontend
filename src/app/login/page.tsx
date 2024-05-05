@@ -42,6 +42,7 @@ export default function LoginPage() {
                 console.log("Login success", res.data);
                 toast.success("Login success");
                 if(res.data.loggedInUser.twoFA.enabled){
+                    console.log(res.data.accessToken);
                     setToken(res.data.accessToken);
                     router.push('/twofactor');
                 }
