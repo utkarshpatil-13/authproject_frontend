@@ -15,7 +15,7 @@ interface FormErrors {
     code?: string;
 }
 
-export default function LoginPage() {
+export default function TwoFactorPage() {
     const [loading, setLoading] = useState(false);
     const [code, setCode] = useState('');
     const router = useRouter();
