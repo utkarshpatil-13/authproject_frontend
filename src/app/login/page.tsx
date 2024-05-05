@@ -105,7 +105,7 @@ export default function LoginPage() {
                             </div> */}
                         </div>
                         <button className='w-full bg-black text-white p-2 rounded text-xl'>Submit</button>
-                        <p className='text-center text-gray-600 mt-3'>Don't have an Account? <Link href="/signup" className='underline hover:text-black cursor-pointer'>Sign up</Link></p>
+                        <p className='text-center text-gray-600 mt-3'>Don&apos;t have an Account? <Link href="/signup" className='underline hover:text-black cursor-pointer'>Sign up</Link></p>
                     </form>
                 )
             }   
