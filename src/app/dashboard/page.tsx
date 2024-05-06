@@ -201,9 +201,8 @@ export default function DashboardPage(){
                 <h2 className="text-4xl text-center my-5">Login and Logout Activities</h2>
                 {
                     activities.map((activity, index) => (
-                        <div>
-                            {/* <div>hi</div> */}
-                            <div key={index} className="my-2"><b>UserId : </b>{activity.userId}, <b>Activity Type: </b>{activity.activityType}, <b>Activity Timestamp : </b> {activity.timestamp}, <b>Device Info: </b>{activity.deviceInfo} </div>
+                        <div key={index} className="my-2">
+                            <b>UserId : </b>{activity.userId}, <b>Activity Type: </b>{activity.activityType}, <b>Activity Timestamp : </b> {activity.timestamp}, <b>Device Info: </b>{activity.deviceInfo}
                         </div>
                     ))
                 }
