@@ -10,7 +10,7 @@ export default function VerifyEmailPage(){
 
     const verifyUserEmail = async () => {
         try{
-            const response = await fetch(`http://localhost:4000/api/user/verifyemail/?token=${token}`, {
+            const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/verifyemail/?token=${token}`, {
                 method: "GET",
                 headers: {
                     'Content-Type' : 'application/json'
@@ -35,7 +35,7 @@ export default function VerifyEmailPage(){
 
     // const isVerified = async () => {
     //     try{
-    //         const response = await fetch(`http://localhost:4000/api/user/isverified/?token=${token}`, {
+    //         const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/isverified/?token=${token}`, {
     //             method: "GET",
     //             headers: {
     //                 'Content-Type' : 'application/json'

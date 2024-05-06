@@ -46,7 +46,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         setToken(storedToken || '');      
         console.log(token);
 
-        fetch('http://localhost:4000/api/user/getuser', {
+        fetch('https://authproject-6dsi.onrender.com/api/user/getuser', {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -72,7 +72,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     //     setToken(storedToken || ''); 
 
     //     try {
-    //         const response = await fetch('http://localhost:4000/api/user/getuser', {
+    //         const response = await fetch('https://authproject-6dsi.onrender.com/api/user/getuser', {
     //             method: "GET",
     //             headers: {
     //                 'Content-Type': 'application/json',

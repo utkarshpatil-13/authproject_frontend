@@ -34,7 +34,7 @@ export default function DashboardPage(){
         setToken(storedToken || '');  
         console.log(token);
 
-        fetch('http://localhost:4000/api/user/getuser', {
+        fetch('https://authproject-6dsi.onrender.com/api/user/getuser', {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -61,7 +61,7 @@ export default function DashboardPage(){
     
     const logout = async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/user/logout', {
+            const response = await fetch('https://authproject-6dsi.onrender.com/api/user/logout', {
                 method: "POST",
                 headers: {
                     'authorization' : `Bearer ${token}`
@@ -98,7 +98,7 @@ export default function DashboardPage(){
             twofaqr.classList.toggle('hidden');
         }
         try{
-            const response = await fetch('http://localhost:4000/api/user/qrimage', {
+            const response = await fetch('https://authproject-6dsi.onrender.com/api/user/qrimage', {
                 method: "POST",
                 headers: {
                     'Content-Type' : 'application/json',
@@ -132,7 +132,7 @@ export default function DashboardPage(){
         console.log(code);
 
         try{
-            const response = await fetch(`http://localhost:4000/api/user/settwofa?code=${code}`, {
+            const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/settwofa?code=${code}`, {
                 method: "POST",
                 headers: {
                     'Content-Type' : 'application/json',

@@ -29,7 +29,7 @@ export default function TwoFactorPage() {
             console.log(token);
 
             setLoading(true);
-            const response = await fetch(`http://localhost:4000/api/user/twofactor?code=${code}`, {
+            const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/twofactor?code=${code}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

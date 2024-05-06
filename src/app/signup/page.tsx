@@ -31,7 +31,7 @@ export default function SignUpPage(){
 
         try{
             setLoading(true);
-            const response = await fetch("http://localhost:4000/api/user/register", {
+            const response = await fetch("https://authproject-6dsi.onrender.com/api/user/register", {
                 method: "POST",
                 headers: {
                     'Content-Type' : 'application/json'
