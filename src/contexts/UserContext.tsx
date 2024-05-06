@@ -1,5 +1,6 @@
 "use client";
 import { createContext, ReactNode, useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
 
 // Define the type of your user object
 interface User {
@@ -13,9 +14,11 @@ interface UserContextValue {
     ready: boolean;
     verified: boolean;
     token: string; 
+    socket: Socket | null;
     setToken: (token: string) => void; 
     setUser: (user: User | null) => void;
     setVerified: (verified: boolean) => void;
+    setSocket: (socket: Socket | null) => void;
 }
 
 // Define the type of props for the context provider
@@ -29,9 +32,11 @@ const UserContext = createContext<UserContextValue>({
     ready: false, 
     verified: false,
     token: '', 
+    socket: null,
     setToken: () => {},
     setUser: () => {},
-    setVerified: () => {}
+    setVerified: () => {},
+    setSocket: () => {}
 });
 
 // Define the UserContextProvider component
@@ -40,13 +45,14 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     const [ready, setReady] = useState<boolean>(false);
     const [verified, setVerified] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
+    const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');   
         setToken(storedToken || '');      
         console.log(token);
 
-        fetch('https://authproject-6dsi.onrender.com/api/user/getuser', {
+        fetch('http://localhost:4000/api/user/getuser', {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -98,7 +104,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     // }
 
     return (
-        <UserContext.Provider value={{ user, setUser, ready, verified, setVerified, token, setToken }}>
+        <UserContext.Provider value={{ user, setUser, ready, verified, setVerified, token, setToken, setSocket, socket }}>
             {children}
         </UserContext.Provider>
     );

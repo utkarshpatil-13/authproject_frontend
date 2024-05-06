@@ -1,11 +1,12 @@
 "use client"
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import UserContext from '@/contexts/UserContext';
+import {io} from 'socket.io-client';
 
 interface FormData {
     code: string;
@@ -19,7 +20,7 @@ export default function TwoFactorPage() {
     const [loading, setLoading] = useState(false);
     const [code, setCode] = useState('');
     const router = useRouter();
-    const {token} = useContext(UserContext);
+    const {token, socket, setSocket} = useContext(UserContext);
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
@@ -29,7 +30,7 @@ export default function TwoFactorPage() {
             console.log(token);
 
             setLoading(true);
-            const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/twofactor?code=${code}`, {
+            const response = await fetch(`http://localhost:4000/api/user/twofactor?code=${code}&socketId=${socket?.id}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,6 +44,12 @@ export default function TwoFactorPage() {
                 console.log("Login success", res.data);
                 toast.success("Login success");
                 localStorage.setItem('token', token);
+
+                socket?.on('message', (data: any) => {
+                    console.log(data);
+                    // setActivities(prevActivities => [...prevActivities, data]); // Update activities state with received activity
+                })
+
                 router.push("/dashboard");
                 setLoading(false);
             } else {
@@ -59,6 +66,17 @@ export default function TwoFactorPage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        // Establish Socket connection
+        const socket = io('http://localhost:4000');
+        setSocket(socket); // Save socket to UserContext
+
+        // Cleanup function
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     return (
         <div className='flex flex-col items-center justify-center min-h-screen bg-white'>

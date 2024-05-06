@@ -1,22 +1,20 @@
 "use client";
+
 import UserContext from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
+import io from 'socket.io-client';
 
 interface User {
     [x: string]: any;
     // Define your user properties here
 }
 
-// Define the type of your context value
-interface UserData {
-    user: User | null;
-    ready: boolean;
-    verified: boolean;
-    token: string; 
-    setToken: (token: string) => void; 
-    setUser: (user: User | null) => void;
-    setVerified: (verified: boolean) => void;
+interface Activity {
+    userId: string;
+    activityType: string;
+    timestamp: string;
+    deviceInfo: string;
 }
 
 export default function DashboardPage(){
@@ -25,27 +23,64 @@ export default function DashboardPage(){
     const [code, setCode] = useState('');
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string>('');
+    // const [socket, setSocket] = useState<any>(null);
+    const [activities, setActivities] = useState<Activity[]>([]);
 
     const router = useRouter();
-    // const {user, ready, setUser, setToken, setVerified} = useContext(UserContext);
+    const {socket, setSocket} = useContext(UserContext);
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');  
         setToken(storedToken || '');  
         console.log(token);
 
-        fetch('https://authproject-6dsi.onrender.com/api/user/getuser', {
+        fetch(`http://localhost:4000/api/user/getuser`, {
             method: "GET",
             headers: {
-                'Content-Type' : 'application/json',
-                'authorization': `Bearer ${storedToken}` 
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${storedToken}`
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(res => {
             console.log(res);
             setUser(res.data.user);
         })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
+    }, [token]);
+
+    useEffect(() => {
+        const socket = io('http://localhost:4000')
+
+        console.log(socket);
+
+        socket.on('message', (data) => {
+            console.log("Message ", data);
+        })
+
+        socket.on('login', (data)=> {
+            setActivities((prevActivities) => [...prevActivities, data]);
+        })
+
+        socket.on('twofactor', (data)=> {
+            setActivities((prevActivities) => [...prevActivities, data]);
+        })
+
+        socket.on('logout', (data)=> {
+            setActivities((prevActivities) => [...prevActivities, data]);
+        })
+
+        return () => {
+            socket.disconnect();
+        }
     }, []);
     
     
@@ -61,7 +96,7 @@ export default function DashboardPage(){
     
     const logout = async () => {
         try {
-            const response = await fetch('https://authproject-6dsi.onrender.com/api/user/logout', {
+            const response = await fetch('http://localhost:4000/api/user/logout', {
                 method: "POST",
                 headers: {
                     'authorization' : `Bearer ${token}`
@@ -74,9 +109,6 @@ export default function DashboardPage(){
     
             if(response.ok){
                 alert(res.message);
-                // setToken("");
-                // setVerified(false);
-                // setUser(null);
                 localStorage.removeItem('token');
                 router.push("/");
             }
@@ -98,7 +130,7 @@ export default function DashboardPage(){
             twofaqr.classList.toggle('hidden');
         }
         try{
-            const response = await fetch('https://authproject-6dsi.onrender.com/api/user/qrimage', {
+            const response = await fetch('http://localhost:4000/api/user/qrimage', {
                 method: "POST",
                 headers: {
                     'Content-Type' : 'application/json',
@@ -132,7 +164,7 @@ export default function DashboardPage(){
         console.log(code);
 
         try{
-            const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/settwofa?code=${code}`, {
+            const response = await fetch(`http://localhost:4000/api/user/settwofa?code=${code}`, {
                 method: "POST",
                 headers: {
                     'Content-Type' : 'application/json',
@@ -166,30 +198,37 @@ export default function DashboardPage(){
             <button className="text-xl bg-black px-5 py-3 text-white rounded-md my-2" onClick={logout}>Logout</button>
 
             <div className="w-fit">
-
+                <h2 className="text-4xl text-center my-5">Login and Logout Activities</h2>
                 {
-                        !user?.twoFA.enabled && (
-                            <>
-                                <div className="border-t-2 border-gray-600 w-full my-4 mr-4"></div>
-                                <button className="text-xl bg-black px-5 py-3 text-white rounded-md my-2" onClick={getQR}>Enable 2FA</button>
-                            </>
-                        )
+                    activities.map((activity, index) => (
+                        <div>
+                            {/* <div>hi</div> */}
+                            <div key={index} className="my-2"><b>UserId : </b>{activity.userId}, <b>Activity Type: </b>{activity.activityType}, <b>Activity Timestamp : </b> {activity.timestamp}, <b>Device Info: </b>{activity.deviceInfo} </div>
+                        </div>
+                    ))
+                }
+                {
+                    !user?.twoFA.enabled && (
+                        <>
+                            <div className="border-t-2 border-gray-600 w-full my-4 mr-4"></div>
+                            <button className="text-xl bg-black px-5 py-3 text-white rounded-md my-2" onClick={getQR}>Enable 2FA</button>
+                        </>
+                    )
                 }
             </div>
 
             {
-                    !user?.twoFA.enabled && (
-                        <div className="mt-4 flex flex-col items-center justify-center hidden" id="twofaqr">
-                            <img id="qrcode" className="" alt="QR Code" />
+                !user?.twoFA.enabled && (
+                    <div className="mt-4 flex flex-col items-center justify-center hidden" id="twofaqr">
+                        <img id="qrcode" className="" alt="QR Code" />
 
-                            <form className="mt-4">
-                                <input onChange={(e) => setCode(e.target.value)} value={code} type="text" placeholder='Enter OTP' className='w-full p-2 rounded mb-4 border-2 border-gray-300 mx-2 text-xl'/>
-                                <button className='w-full bg-black text-white p-2 rounded text-xl mx-2' onClick={submitQR}>Submit</button>
-                            </form>
-                        </div>
-                    )
+                        <form className="mt-4">
+                            <input onChange={(e) => setCode(e.target.value)} value={code} type="text" placeholder='Enter OTP' className='w-full p-2 rounded mb-4 border-2 border-gray-300 mx-2 text-xl'/>
+                            <button className='w-full bg-black text-white p-2 rounded text-xl mx-2' onClick={submitQR}>Submit</button>
+                        </form>
+                    </div>
+                )
             }
-
         </div>
     );
 }   
