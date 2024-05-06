@@ -15,6 +15,7 @@ interface Activity {
     activityType: string;
     timestamp: string;
     deviceInfo: string;
+    username: string;
 }
 
 export default function DashboardPage(){
@@ -202,7 +203,7 @@ export default function DashboardPage(){
                 {
                     activities.map((activity, index) => (
                         <div key={index} className="my-2">
-                            <b>UserId : </b>{activity.userId}, <b>Activity Type: </b>{activity.activityType}, <b>Activity Timestamp : </b> {activity.timestamp}, <b>Device Info: </b>{activity.deviceInfo}
+                            <b>UserId: </b>{activity.userId}, <b>Username: </b>{activity.username} <b>Activity Type: </b>{activity.activityType}, <b>Activity Timestamp: </b> {activity.timestamp}, <b>Device Info: </b>{activity.deviceInfo}
                         </div>
                     ))
                 }
