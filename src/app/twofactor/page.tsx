@@ -30,7 +30,7 @@ export default function TwoFactorPage() {
             console.log(token);
 
             setLoading(true);
-            const response = await fetch(`http://localhost:4000/api/user/twofactor?code=${code}&socketId=${socket?.id}`, {
+            const response = await fetch(`https://authproject-6dsi.onrender.com/api/user/twofactor?code=${code}&socketId=${socket?.id}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export default function TwoFactorPage() {
 
     useEffect(() => {
         // Establish Socket connection
-        const socket = io('http://localhost:4000');
+        const socket = io('https://authproject-6dsi.onrender.com');
         setSocket(socket); // Save socket to UserContext
 
         // Cleanup function
